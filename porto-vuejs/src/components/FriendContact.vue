@@ -1,14 +1,13 @@
 <template>
   <li>
-    <h2>
-      {{ friendName }} {{ friendIsFavorite === true ? "(Favorite)" : "" }}
-    </h2>
+    <h2>{{ friendName }} {{ isFavorite === true ? "(Favorite)" : "" }}</h2>
     <button @click="toggleDetails">Show Details</button>
     <button @click="toggleFavorite">Toggle Favorite</button>
     <ul v-if="detailsAreVisible">
       <li><strong>Phone:</strong>{{ phone }}</li>
       <li><strong>Email:</strong>{{ emailAddress }}</li>
     </ul>
+    <button @click="$emit('deleteContact', id)">Delete</button>
   </li>
 </template>
 <script>
@@ -18,6 +17,10 @@ export default {
     */
   //   Detailed version of props with validation
   props: {
+    id: {
+      type: String,
+      required: true,
+    },
     friendName: {
       type: String,
       required: true,
@@ -34,21 +37,22 @@ export default {
       type: Boolean,
       required: true,
       default: false,
-      //   validator: value => {
-      //     return value === "0" || value === "1";
-      //   },
     },
   },
-
+  emits: ["toggle-favorite", "deleteContact"],
+  // emits: {
+  //   "toggle-favorite": function (id) {
+  //     if (id) {
+  //       return true;
+  //     } else {
+  //       // console.warn("Missing id!");
+  //       return false;
+  //     }
+  //   },
+  // },
   data() {
     return {
       detailsAreVisible: false,
-      //   friend: {
-      //     id: "fajar",
-      //     name: "Fajar Rakhman",
-      //     phoneNumber: "082177343679",
-      //     email: "rrrfajar1@gmail.com",
-      //   },
       friendIsFavorite: this.isFavorite,
     };
   },
@@ -57,11 +61,7 @@ export default {
       this.detailsAreVisible = !this.detailsAreVisible;
     },
     toggleFavorite() {
-      if (this.friendIsFavorite === true) {
-        this.friendIsFavorite = false;
-      } else {
-        this.friendIsFavorite = true;
-      }
+      this.$emit("toggle-favorite", this.id);
     },
   },
 };
